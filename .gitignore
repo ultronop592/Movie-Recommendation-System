@@ -4,7 +4,8 @@ __pycache__/
 *.class
 
 # Large data files
-src/*.pkl
+src/cosine_sim.pkl
+src/tfidf_matrix.pkl
 src/movie_cache/
 *.csv
 
