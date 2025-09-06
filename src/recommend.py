@@ -1,5 +1,8 @@
-import joblib
+import pandas as pd
+import numpy as np
 import logging
+import os
+from scipy.sparse import load_npz
 
 # Setup logging
 logging.basicConfig(
@@ -13,11 +16,14 @@ logging.basicConfig(
 
 logging.info("🔁 Loading data...")
 try:
-    # Use absolute path for loading pickle files
-    import os
+    # Get current directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    movie = joblib.load(os.path.join(current_dir, 'cleaned.pkl'))
-    cosine_sim = joblib.load(os.path.join(current_dir, 'cosine_sim.pkl'))
+    
+    # Load movie dataset from parquet
+    movie = pd.read_parquet(os.path.join(current_dir, 'cleaned.parquet'))
+    
+    # Load cosine similarity matrix from npz
+    cosine_sim = np.load(os.path.join(current_dir, 'cosine_sim.npz'))['similarity_matrix']
     
     # Make movie variable available at module level
     __all__ = ['movie', 'recommend_movies']

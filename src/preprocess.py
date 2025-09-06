@@ -1,13 +1,14 @@
 # preprocess.py
 import pandas as pd
+import numpy as np
 import re
 import nltk
-import joblib
 import logging
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from scipy.sparse import save_npz
 
 
 # Setup logging
@@ -70,10 +71,18 @@ logging.info("📐 Calculating cosine similarity...")
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 logging.info("✅ Cosine similarity matrix generated.")
 
-# Save with maximum compression
-logging.info("💾 Saving files with maximum compression...")
-joblib.dump(movie, 'cleaned.pkl', compress=('gzip', 9))  # Maximum compression
-joblib.dump(tfidf_matrix, 'tfidf_matrix.pkl', compress=('gzip', 9))
-joblib.dump(cosine_sim, 'cosine_sim.pkl', compress=('gzip', 9))
+# Save in more compatible formats
+logging.info("💾 Saving files in compatible formats...")
+
+# Save movie dataset as parquet
+movie.to_parquet('cleaned.parquet', compression='gzip')
+
+# Save cosine similarity matrix as numpy array
+np.savez_compressed('cosine_sim.npz', similarity_matrix=cosine_sim)
+
+# Save TF-IDF matrix as sparse matrix
+from scipy.sparse import save_npz
+save_npz('tfidf_matrix.npz', tfidf_matrix)
+
 logging.info("💾 Data saved to disk.")
 logging.info("✅ Preprocessing complete.")
