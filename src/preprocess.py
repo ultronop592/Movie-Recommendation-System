@@ -70,9 +70,10 @@ logging.info("📐 Calculating cosine similarity...")
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 logging.info("✅ Cosine similarity matrix generated.")
 
-# Save everything
-joblib.dump(movie, 'cleaned.pkl')
-joblib.dump(tfidf_matrix, 'tfidf_matrix.pkl')
-joblib.dump(cosine_sim, 'cosine_sim.pkl')
+# Save with maximum compression
+logging.info("💾 Saving files with maximum compression...")
+joblib.dump(movie, 'cleaned.pkl', compress=('gzip', 9))  # Maximum compression
+joblib.dump(tfidf_matrix, 'tfidf_matrix.pkl', compress=('gzip', 9))
+joblib.dump(cosine_sim, 'cosine_sim.pkl', compress=('gzip', 9))
 logging.info("💾 Data saved to disk.")
 logging.info("✅ Preprocessing complete.")
