@@ -22,8 +22,8 @@ try:
     # Load movie dataset from parquet
     movie = pd.read_parquet(os.path.join(current_dir, 'cleaned.parquet'))
     
-    # Load cosine similarity matrix from npz
-    cosine_sim = np.load(os.path.join(current_dir, 'cosine_sim.npz'))['similarity_matrix']
+    # Load cosine similarity matrix from npz (sparse format)
+    cosine_sim = load_npz(os.path.join(current_dir, 'cosine_sim.npz')).toarray()
     
     # Make movie variable available at module level
     __all__ = ['movie', 'recommend_movies']
