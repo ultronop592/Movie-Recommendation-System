@@ -78,7 +78,7 @@ logging.info("💾 Saving files in compatible formats...")
 movie.to_parquet('cleaned.parquet', compression='gzip')
 
 # Convert dense similarity matrix to sparse (only keep significant similarities)
-threshold = 0.2  # Only keep similarities above this threshold
+threshold = 0.5  # Only keep strong similarities above this threshold
 sparse_sim = cosine_sim.copy()
 sparse_sim[sparse_sim < threshold] = 0
 from scipy.sparse import csr_matrix
