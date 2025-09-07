@@ -1,8 +1,5 @@
-import pandas as pd
-import numpy as np
+import joblib
 import logging
-import os
-from scipy.sparse import load_npz
 
 # Setup logging
 logging.basicConfig(
@@ -16,18 +13,8 @@ logging.basicConfig(
 
 logging.info("🔁 Loading data...")
 try:
-    # Get current directory
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    # Load movie dataset from parquet
-    movie = pd.read_parquet(os.path.join(current_dir, 'cleaned.parquet'))
-    
-    # Load cosine similarity matrix from npz (sparse format)
-    cosine_sim = load_npz(os.path.join(current_dir, 'cosine_sim.npz')).toarray()
-    
-    # Make movie variable available at module level
-    __all__ = ['movie', 'recommend_movies']
-    
+    movie = joblib.load('cleaned.pkl')
+    cosine_sim = joblib.load('cosine_sim.pkl')
     logging.info("✅ Data loaded successfully.")
 except Exception as e:
     logging.error("❌ Failed to load required files: %s", str(e))
