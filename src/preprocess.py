@@ -23,9 +23,15 @@ logging.basicConfig(
 
 logging.info("🚀 Starting preprocessing...")
 
-nltk.download('punkt')
-nltk.download('punkt_tab')
-nltk.download('stopwords')
+# Download NLTK data with error handling
+try:
+    nltk.download('punkt', quiet=True)
+    nltk.download('punkt_tab', quiet=True) 
+    nltk.download('stopwords', quiet=True)
+    logging.info("✅ NLTK data downloaded successfully")
+except Exception as e:
+    logging.warning(f"⚠️ NLTK download warning: {e}")
+    # Continue anyway - might still work
 
 # Text cleaning
 stop_words = set(stopwords.words('english'))
