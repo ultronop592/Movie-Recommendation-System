@@ -69,8 +69,12 @@ pip install -r requirements.txt
    - Get a free API key from [omdbapi.com](http://www.omdbapi.com/)
    - Update `src/config.json` with your API key
 
-4. **Generate data files:**
+4. **Generate data files (Required):**
 ```bash
+# Option A: Run the setup script (recommended)
+python setup_data.py
+
+# Option B: Manual setup
 cd src
 python preprocess.py
 ```
@@ -81,6 +85,8 @@ streamlit run src/main.py
 ```
 
 6. **Open your browser** and go to `http://localhost:8501`
+
+> **Note**: The preprocessing step generates large data files (cosine_sim.npz, tfidf_matrix.npz, cleaned.parquet) that are not included in the repository due to GitHub's size limitations. You must run the preprocessing step before using the application.
 
 ## 🌐 Deployment Options
 
