@@ -83,12 +83,9 @@ logging.info("💾 Saving files in compatible formats...")
 # Save movie dataset as parquet
 movie.to_parquet('cleaned.parquet', compression='gzip')
 
-# Convert dense similarity matrix to sparse (only keep significant similarities)
-threshold = 0.5  # Only keep strong similarities above this threshold
-sparse_sim = cosine_sim.copy()
-sparse_sim[sparse_sim < threshold] = 0
+# Save cosine similarity matrix as sparse matrix (keep all similarities)
 from scipy.sparse import csr_matrix
-sparse_sim = csr_matrix(sparse_sim)
+sparse_sim = csr_matrix(cosine_sim)
 save_npz('cosine_sim.npz', sparse_sim)
 
 # Save TF-IDF matrix as sparse matrix
