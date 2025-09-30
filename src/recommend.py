@@ -3,6 +3,8 @@ import numpy as np
 import logging
 from scipy.sparse import load_npz
 from pathlib import Path
+import subprocess
+import sys
 
 # Get the directory where this script is located
 script_dir = Path(__file__).parent
@@ -17,7 +19,57 @@ logging.basicConfig(
     ]
 )
 
-logging.info("🔁 Loading data...")
+def check_and_generate_data():
+    """Check if required data files exist, generate them if missing."""
+    required_files = [
+        'cleaned.parquet',
+        'cosine_sim.npz',
+        'tfidf_matrix.npz'
+    ]
+    
+    missing_files = []
+    for file in required_files:
+        if not (script_dir / file).exists():
+            missing_files.append(file)
+    
+    if missing_files:
+        logging.info(f"🔧 Missing data files: {missing_files}")
+        logging.info("� Generating data files from movies.csv...")
+        
+        # Check if movies.csv exists
+        if not (script_dir / 'movies.csv').exists():
+            raise FileNotFoundError(
+                "❌ movies.csv not found! Cannot generate data files."
+            )
+        
+        # Run preprocessing
+        try:
+            result = subprocess.run(
+                [sys.executable, str(script_dir / 'preprocess.py')],
+                cwd=script_dir,
+                capture_output=True,
+                text=True,
+                timeout=300  # 5 minutes timeout
+            )
+            
+            if result.returncode != 0:
+                logging.error(f"❌ Preprocessing failed: {result.stderr}")
+                raise RuntimeError("Preprocessing failed")
+            
+            logging.info("✅ Data files generated successfully!")
+            
+        except subprocess.TimeoutExpired:
+            logging.error("❌ Preprocessing timed out!")
+            raise RuntimeError("Preprocessing timed out")
+        except Exception as e:
+            logging.error(f"❌ Error during preprocessing: {e}")
+            raise
+
+logging.info("�🔁 Loading data...")
+
+# Check and generate data files if needed
+check_and_generate_data()
+
 try:
     # Load the processed movie data
     movie = pd.read_parquet(script_dir / 'cleaned.parquet')

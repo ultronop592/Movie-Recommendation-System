@@ -1,8 +1,6 @@
 import json
 import os
 import streamlit as st
-from recommend import movie, recommend_movies
-from omdb_utils import get_movie_details_single
 from pathlib import Path
 
 # Get the directory where this script is located
@@ -28,6 +26,29 @@ st.set_page_config(
 )
 
 st.title("🎬 Movie Recommender")
+
+# Check if data files need to be generated
+required_files = ['cleaned.parquet', 'cosine_sim.npz', 'tfidf_matrix.npz']
+missing_files = [f for f in required_files if not (script_dir / f).exists()]
+
+if missing_files:
+    st.info("🔧 Setting up the recommendation system for the first time...")
+    st.info("This may take a few minutes to process the movie database.")
+    
+    with st.spinner("📊 Processing movie data... Please wait (this happens only once)"):
+        try:
+            # Import here to trigger data generation
+            from recommend import movie, recommend_movies
+            from omdb_utils import get_movie_details_single
+            st.success("✅ Setup complete! The recommendation system is ready.")
+        except Exception as e:
+            st.error(f"❌ Error setting up the system: {str(e)}")
+            st.error("Please check the logs and try again.")
+            st.stop()
+else:
+    # Import normally if files exist
+    from recommend import movie, recommend_movies
+    from omdb_utils import get_movie_details_single
 
 # Using 'title' instead of 'song' now
 movie_list = sorted(movie['title'].dropna().unique())

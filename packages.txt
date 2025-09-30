@@ -1,0 +1,10 @@
+# Streamlit Cloud packages.txt
+# Additional system packages required for preprocessing
+
+# For NLTK data download
+python3-nltk-data
+
+# For scientific computing
+python3-numpy
+python3-scipy
+python3-pandas
