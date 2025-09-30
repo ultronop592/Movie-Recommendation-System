@@ -1,12 +1,25 @@
 import json
+import os
 import streamlit as st
 from recommend import movie, recommend_movies
 from omdb_utils import get_movie_details_single
+from pathlib import Path
 
-config = json.load(open("config.json"))
+# Get the directory where this script is located
+script_dir = Path(__file__).parent
 
-# OMDB api key
-OMDB_API_KEY = config["OMDB_API_KEY"]
+# Load config and handle environment variables for deployment
+try:
+    config = json.load(open(script_dir / "config.json"))
+    # Use environment variable if available (for deployment), otherwise use config file
+    OMDB_API_KEY = os.getenv("OMDB_API_KEY", config.get("OMDB_API_KEY", ""))
+except FileNotFoundError:
+    # Fallback to environment variable only
+    OMDB_API_KEY = os.getenv("OMDB_API_KEY", "")
+
+if not OMDB_API_KEY:
+    st.error("❌ OMDB API key not found! Please set OMDB_API_KEY environment variable or update config.json")
+    st.stop()
 
 st.set_page_config(
     page_title="Movie Recommender",
